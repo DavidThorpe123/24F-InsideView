@@ -23,7 +23,7 @@ student_emails = []
 
 
 with col1:
-    companies = requests.get('http://api:4000/companies').json()
+    companies = requests.get('http://api:4000/co/companies').json()
     #company_names = [company['name'] for company in companies]
     for company in companies:
         company_id = company['id']
@@ -45,7 +45,7 @@ if 'editing_company' in st.session_state:
 
         if st.form_submit_button("Save"):
             response = requests.put(
-                f"http://api:4000/companies/{editing_company['id']}",
+                f"http://api:4000/co/companies/{editing_company['id']}",
                 json={"name": updated_name}
             )
 
@@ -57,7 +57,7 @@ if 'editing_company' in st.session_state:
                 st.error("Failed to update company name.")
 
 with col2:
-    reviews_response = requests.get('http://api:4000/jobPostings/reviews').json()
+    reviews_response = requests.get('http://api:4000/jp/jobPostings/reviews')
     if reviews_response.status_code == 200:
         reviews = reviews_response.json()
         st.header("Recent Reviews:")
@@ -94,7 +94,7 @@ with col3:
 
 
 with col4:
-    accounts_response = requests.get('https://api:4000/system_admins')
+    accounts_response = requests.get('http://api:4000/ad/system_admins')
     if accounts_response.status_code == 200:
         accounts = accounts_response.json()
         for acc in accounts:
@@ -119,7 +119,7 @@ if 'editing_account' in st.session_state:
 
         if st.form_submit_button("Save"):
             response = requests.put(
-                f"http://api:4000/system_admins/{editing_account['id']}",
+                f"http://api:4000/ad/system_admins/{editing_account['id']}",
                 json={"id": updated_id}
             )
 

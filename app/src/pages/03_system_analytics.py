@@ -1,4 +1,4 @@
-import streamlist as st
+import streamlit as st
 from modules.nav import SideBarLinks
 import requests
 import logging
