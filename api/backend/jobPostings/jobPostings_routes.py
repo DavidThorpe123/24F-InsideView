@@ -118,9 +118,7 @@ def update_review(review_title):
 
     the_response = make_response(jsonify('Review Updated'))
     the_response.status_code = 200
-<<<<<<< HEAD
-    return the_response
-=======
+
     return the_response
 
 @jobPostings.route('/jobPostings/submit_app/<job_posting_id>', methods=['POST'])
@@ -159,4 +157,3 @@ def get_applications():
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
     return the_response
->>>>>>> main
