@@ -10,19 +10,21 @@ st.set_page_config(layout = 'wide')
 SideBarLinks()
 
 if st.button("Back", key="back_button"):
-    st.switch_page('pages/20_Admin_Home')
+    st.switch_page('pages/03_admin_home.py')
 
 st.title("System Dashboard:")
 
 # Display 4 columns
 # Companies, Reviews, Students, Accounts
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 student_buttons = []
 student_emails = []
 
+
+
 with col1:
-    companies = requests.get('http://api:4000/co/companies').json()
-    company_names = [company['name'] for company in companies]
+    companies = requests.get('http://api:4000/companies').json()
+    #company_names = [company['name'] for company in companies]
     for company in companies:
         company_id = company['id']
         company_name = company['name']
@@ -43,7 +45,7 @@ if 'editing_company' in st.session_state:
 
         if st.form_submit_button("Save"):
             response = requests.put(
-                f"http://api:4000/co/companies/{editing_company['id']}",
+                f"http://api:4000/companies/{editing_company['id']}",
                 json={"name": updated_name}
             )
 
@@ -55,7 +57,7 @@ if 'editing_company' in st.session_state:
                 st.error("Failed to update company name.")
 
 with col2:
-    reviews_response = requests.get('http://api:4000/jp/jobPostings/reviews').json()
+    reviews_response = requests.get('http://api:4000/jobPostings/reviews').json()
     if reviews_response.status_code == 200:
         reviews = reviews_response.json()
         st.header("Recent Reviews:")
@@ -91,8 +93,39 @@ with col3:
 
 
 
-# with col4:
-#     accounts_response = requests.get('https://api:4000/students')
-#     if accounts_response.status_code == 200:
-#         accounts = accounts_response.json()
-#         for _ in range(len(accounts)):
+with col4:
+    accounts_response = requests.get('https://api:4000/system_admins')
+    if accounts_response.status_code == 200:
+        accounts = accounts_response.json()
+        for acc in accounts:
+            acc_id = accounts['id']
+            acc_first = accounts['firstName']
+            acc_last = accounts['lastName']
+            st.write(acc_first, acc_last)
+            if st.button(f"Edit", key=f"edit_{acc_id}"):
+                st.session_state['editing_account'] = {
+                    'id': acc_id,
+                    'firstName': acc_first,
+                    'lastName': acc_last
+            }
+            st.experimental_rerun
+
+if 'editing_account' in st.session_state:
+    with st.form("edit_form"):
+        editing_account = st.session_state['editing_account']
+        st.write(f"Editing: {editing_account['id']}")
+
+        updated_id = st.text_input("New Account ID", value=editing_account['id'])
+
+        if st.form_submit_button("Save"):
+            response = requests.put(
+                f"http://api:4000/system_admins/{editing_account['id']}",
+                json={"id": updated_id}
+            )
+
+            if response.status_code == 200:
+                st.success("Account ID updated.")
+                del st.session_state['editing_account']
+                st.experimental_rerun()
+            else:
+                st.error("Failed to update account ID.")
