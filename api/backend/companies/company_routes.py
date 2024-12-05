@@ -162,3 +162,37 @@ def get_companies_avg_rating(company_id):
     the_response = make_response(jsonify({'AvgRating': avg_rating}))
     the_response.status_code = 200
     return the_response
+
+@companies.route('/companies/common_courses_taken/<company_id>', methods=['GET'])
+def get_companies_common_courses_taken(company_id):
+
+    cursor = db.get_db().cursor()
+    cursor.execute('''SELECT 
+    co.id AS courseId, 
+    co.title AS courseTitle, 
+    COUNT(sc.courseId) AS studentCount
+FROM 
+    companies c
+JOIN 
+    job_posting jp ON c.id = jp.companyId
+JOIN 
+    job_application ja ON jp.id = ja.jobId
+JOIN 
+    student_courses sc ON ja.studentId = sc.studentId
+JOIN 
+    courses co ON sc.courseId = co.id
+WHERE 
+    c.id = %s
+GROUP BY 
+    co.id, co.title
+ORDER BY 
+    studentCount DESC
+LIMIT 5;
+
+                    ''', (company_id,))
+    
+    theData = cursor.fetchall()
+    
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
+    return the_response
