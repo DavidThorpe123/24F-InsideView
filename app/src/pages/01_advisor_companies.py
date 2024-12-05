@@ -85,8 +85,15 @@ elif st.session_state.page_state == 'company':
             st.write('')
         
       with col2:
+        common_courses = requests.get(f'http://api:4000/co/companies/common_courses_taken/{company_id}').json()
         avg_gpa = requests.get(f'http://api:4000/co/companies/avg_gpa_past_employee/{company_id}').json()
         st.write('### Company Information:')
+        if common_courses:
+          common_courses_titles = [course['courseTitle'] for course in common_courses]
+          st.write(f"Common Courses: {', '.join(common_courses_titles)}")
+        else:
+          st.write('Error!')
+
         st.write(f"Average GPA of Past Employees: {avg_gpa[0]['AverageGPA']}")
         st.write(f"Company Contact Information: {avg_gpa[0]['firstName']}")
         st.write(f"Company Contact Information: {avg_gpa[0]['lastName']}")
@@ -112,6 +119,7 @@ elif st.session_state.page_state == 'student':
         st.write(f"First Name: {student[0]['firstName']}")
         st.write(f"Last Name: {student[0]['lastName']}")
         st.write(f"GPA: {student[0]['gpa']}")
+        st.write(f"Resume: {student[0]['resume']}")
       with col2:
         for i in range(22):
           st.write(' ')
