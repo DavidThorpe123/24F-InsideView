@@ -196,3 +196,33 @@ LIMIT 5;
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
     return the_response
+
+@companies.route('/companies/modify_company/<id>/<new_name>', methods=['PUT'])
+def modify_company(id, new_name):
+    cursor = db.get_db().cursor()
+    cursor.execute('''UPDATE companies SET name = %s WHERE id = %s''', (new_name, id))
+    db.get_db().commit()
+    the_response = make_response(jsonify('Company Updated'))
+    the_response.status_code = 200
+    return the_response
+
+@companies.route('/companies/delete_company/<id>', methods=['DELETE'])
+def delete_company(id):
+    cursor = db.get_db().cursor()
+    cursor.execute('''DELETE FROM companies WHERE id = %s''', (id,))
+    db.get_db().commit()
+    the_response = make_response(jsonify('Company Deleted'))
+    the_response.status_code = 200
+    return the_response
+
+@companies.route('/companies/add_company/<name>', methods=['POST'])
+def add_company(name):
+    cursor = db.get_db().cursor()
+    cursor.execute('''INSERT INTO companies (name) VALUES (%s)''', (name,))
+    db.get_db().commit()
+    the_response = make_response(jsonify('Company Added'))
+    the_response.status_code = 200
+    return the_response
+
+
+    
