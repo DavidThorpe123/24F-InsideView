@@ -163,6 +163,20 @@ def get_companies_avg_rating(company_id):
     the_response.status_code = 200
     return the_response
 
+@companies.route('/companies/<company_id>/<new_name>', methods=['PUT'])
+def update_company_name(company_id, new_name):
+
+    cursor = db.get_db().cursor()
+    cursor.execute('''UPDATE companies
+                      SET name = %s
+                      WHERE id = %s''', (new_name, company_id))
+    
+    db.get_db().commit()
+
+    the_response = make_response(jsonify({}))
+    the_response.status_code = 200
+    return the_response
+
 @companies.route('/companies/common_courses_taken/<company_id>', methods=['GET'])
 def get_companies_common_courses_taken(company_id):
 
@@ -223,6 +237,3 @@ def add_company(name):
     the_response = make_response(jsonify('Company Added'))
     the_response.status_code = 200
     return the_response
-
-
-    
