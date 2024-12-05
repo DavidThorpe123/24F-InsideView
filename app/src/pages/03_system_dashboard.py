@@ -6,11 +6,12 @@ logger = logging.getLogger(__name__)
 
 st.set_page_config(layout = 'wide')
 
-# Sidebar links
-SideBarLinks()
-
 if st.button("Back", key="back_button"):
     st.switch_page('pages/03_admin_home.py')
+
+# Sidebar links
+# SideBarLinks()
+
 
 st.title("System Dashboard:")
 
@@ -24,7 +25,6 @@ student_emails = []
 
 with col1:
     companies = requests.get('http://api:4000/co/companies').json()
-    #company_names = [company['name'] for company in companies]
     for company in companies:
         company_id = company['id']
         company_name = company['name']
@@ -34,7 +34,6 @@ with col1:
                 'id': company_id,
                 'name': company_name
             }
-            st.experimental_rerun
 
 if 'editing_company' in st.session_state:
     with st.form("edit_form"):
@@ -52,7 +51,6 @@ if 'editing_company' in st.session_state:
             if response.status_code == 200:
                 st.success("Company name updated.")
                 del st.session_state['editing_company']
-                st.experimental_rerun()
             else:
                 st.error("Failed to update company name.")
 
@@ -61,7 +59,10 @@ with col2:
     if reviews_response.status_code == 200:
         reviews = reviews_response.json()
         st.header("Recent Reviews:")
-        st.json(reviews)
+        
+        for review in reviews: 
+            st.write(review['title'])
+            st.write(review['content'])
     else:
         st.error("Failed to fetch reviews.")
 
@@ -69,28 +70,30 @@ with col2:
 
 
 with col3:
-    students_response = requests.get('http://api:4000/students/')
+    students_response = requests.get('http://api:4000/st/students')
     if students_response.status_code == 200:
         students = students_response.json()
-        for _ in range(len(students)):
-            student_buttons.append(st.empty())
-            student_emails.append(st.empty())
-        st.json(students)
 
-        def show_student_email(idx):
-            if student_emails[idx].container():
-                student_emails[idx].empty()
-            else:
-                student_emails[idx].write(students[idx]['email'])
-        
-        for i, button in enumerate(student_buttons):
-            with button.container():
-                st.button("Show Email", key = f"show_email_{i}", on_click=lambda: show_student_email(i))
+        for student in students:
+            stu_fn = student['firstName']
+            stu_ln = student['lastName']
+            stu_gpa = student['gpa']
+            stu_gy = student['gradYear']
+            stu_email = student['email']
+            stu_id = student['id']
+            stu_pn = student['phone']
+
+            st.write(stu_fn + " " + stu_ln)
+            st.write(f"GPA: {stu_gpa}")
+            st.write(f"Grad Year: {stu_gy}")
+
+            if st.button('Show Info', key=stu_id):
+                st.write(stu_email)
+                st.write(stu_pn)
+
+            st.write('---')
     else:
         st.error("Failed to fetch students.")
-
-
-
 
 
 with col4:
@@ -98,17 +101,17 @@ with col4:
     if accounts_response.status_code == 200:
         accounts = accounts_response.json()
         for acc in accounts:
-            acc_id = accounts['id']
-            acc_first = accounts['firstName']
-            acc_last = accounts['lastName']
+            acc_id = acc['id']
+            acc_first = acc['firstName']
+            acc_last = acc['lastName']
+            acc_email = acc['email']
             st.write(acc_first, acc_last)
-            if st.button(f"Edit", key=f"edit_{acc_id}"):
+            if st.button(f"Edit", key=f"edit_{acc_email}"):
                 st.session_state['editing_account'] = {
                     'id': acc_id,
                     'firstName': acc_first,
                     'lastName': acc_last
             }
-            st.experimental_rerun
 
 if 'editing_account' in st.session_state:
     with st.form("edit_form"):
@@ -126,6 +129,5 @@ if 'editing_account' in st.session_state:
             if response.status_code == 200:
                 st.success("Account ID updated.")
                 del st.session_state['editing_account']
-                st.experimental_rerun()
             else:
                 st.error("Failed to update account ID.")

@@ -11,7 +11,7 @@ st.set_page_config(layout = 'wide')
 SideBarLinks()
 
 if st.button("Back", key="back_button"):
-    st.switch_page('pages/20_Admin_Home.py')
+    st.switch_page('pages/03_admin_home.py')
 
 st.title("System Analytics:")
 

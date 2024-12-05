@@ -10,7 +10,7 @@ admins = Blueprint('admins', __name__)
 @admins.route('/system_admins', methods=['GET'])
 def get_admins():
     cursor = db.get_db().cursor()
-    cursor.execute('''SELECT firstName, lastName FROM system_admins''')
+    cursor.execute('''SELECT id, firstName, lastName, email FROM system_admins''')
     theData = cursor.fetchall()
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
