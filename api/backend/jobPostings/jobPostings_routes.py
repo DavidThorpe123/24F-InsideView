@@ -8,11 +8,14 @@ from flask import jsonify
 from flask import make_response
 from flask import current_app
 from backend.db_connection import db
+import logging
+
+logger = logging.getLogger(__name__)
 
 #------------------------------------------------------------
 # Create a new Blueprint object, which is a collection of 
 # routes.
-jobPostings = Blueprint('jobPostings', __name__)
+jobPostings = Blueprint('jobPostings', __name__, url_prefix='/jp')
 
 @jobPostings.route('/jobPostings/<company_id>', methods=['GET'])
 def get_jobPostings(company_id):
@@ -33,11 +36,11 @@ def get_jobPostings(company_id):
 def get_reviews(selected_job_id):
     cursor = db.get_db().cursor()
     cursor.execute('''SELECT content, title, rating, datePosted
-                      FROM reviews
-                      WHERE jobId = %s''', (selected_job_id,))
+                    FROM reviews
+                    WHERE jobId = %s''', (selected_job_id,))
 
     theData = cursor.fetchall()
-    
+
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
     return the_response
@@ -115,6 +118,7 @@ def update_review(review_title):
 
     the_response = make_response(jsonify('Review Updated'))
     the_response.status_code = 200
+
     return the_response
 
 @jobPostings.route('/jobPostings/submit_app/<job_posting_id>', methods=['POST'])
@@ -149,6 +153,22 @@ def get_all_reviews():
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
     return the_response
+
+@jobPostings.route('/jobPostings/applications', methods=['GET'])
+def get_applications():
+    cursor = db.get_db().cursor()
+    cursor.execute('''SELECT jp.id, jp.name, jp.datePosted, c.name AS companyName, ja.studentId AS studentId
+                      FROM job_application ja
+                      JOIN job_posting jp ON ja.jobId = jp.id
+                      JOIN companies c ON jp.companyId = c.id
+                      WHERE ja.studentId = 4''')
+
+    theData = cursor.fetchall()
+    
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
+    return the_response
+
 
 @jobPostings.route('/jobPostings/reviews/<review_id>', methods=['DELETE'])
 def delete_review(review_id):
