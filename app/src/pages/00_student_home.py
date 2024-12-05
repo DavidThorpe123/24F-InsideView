@@ -24,7 +24,7 @@ if st.button('View Company Reviews (Or add your own!)',
              use_container_width=True):
   st.switch_page('pages/00_company_reviews.py')
 
-if st.button('View Most Popular Companies', 
+if st.button('View Postings and Apply', 
              type='primary',
              use_container_width=True):
   st.switch_page('pages/00_popular_companies.py')
