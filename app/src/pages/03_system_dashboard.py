@@ -44,8 +44,7 @@ if 'editing_company' in st.session_state:
 
         if st.form_submit_button("Save"):
             response = requests.put(
-                f"http://api:4000/co/companies/{editing_company['id']}",
-                json={"name": updated_name}
+                f"http://api:4000/co/companies/{editing_company['id']}/{updated_name}"
             )
 
             if response.status_code == 200:
@@ -63,6 +62,16 @@ with col2:
         for review in reviews: 
             st.write(review['title'])
             st.write(review['content'])
+
+            if st.button('Delete Review', key=review['id']):
+                delete_response = requests.delete(f"http://api:4000/jp/jobPostings/reviews/{review['id']}")
+
+                if delete_response.status_code == 200:
+                    st.success("Review deleted.")
+                else:
+                    st.error('Couldnt delete review')
+
+            st.write('---')
     else:
         st.error("Failed to fetch reviews.")
 
@@ -87,7 +96,7 @@ with col3:
             st.write(f"GPA: {stu_gpa}")
             st.write(f"Grad Year: {stu_gy}")
 
-            if st.button('Show Info', key=stu_id):
+            if st.button('Show Info', key=stu_email):
                 st.write(stu_email)
                 st.write(stu_pn)
 

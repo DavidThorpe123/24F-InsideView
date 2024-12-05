@@ -138,3 +138,25 @@ def submit_application(job_posting_id):
     the_response = make_response(jsonify('Application Submitted'))
     the_response.status_code = 200
     return the_response
+
+@jobPostings.route('/jobPostings/reviews', methods=['GET'])
+def get_all_reviews():
+    cursor = db.get_db().cursor()
+    cursor.execute('''SELECT * FROM reviews''')
+
+    theData = cursor.fetchall()
+    
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
+    return the_response
+
+@jobPostings.route('/jobPostings/reviews/<review_id>', methods=['DELETE'])
+def delete_review(review_id):
+    cursor = db.get_db().cursor()
+    cursor.execute('''DELETE FROM reviews WHERE id = %s''', (review_id,))
+    db.get_db().commit()
+
+    the_response = make_response(jsonify('Review Deleted'))
+    the_response.status_code = 200
+    return the_response
+
