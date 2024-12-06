@@ -10,12 +10,9 @@ from backend.interns.interns import interns_bp
 from backend.jobPostings.jobPostings_routes import jobPostings
 # from backend.interns import interns
 from backend.students.student_routes import students
-<<<<<<< HEAD
 from backend.reviews.review_routes import reviews
-=======
 from backend.sysAdmins.admin_routes import admins
 
->>>>>>> main
 import os
 from dotenv import load_dotenv
 
