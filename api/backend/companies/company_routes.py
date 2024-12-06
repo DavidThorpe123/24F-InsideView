@@ -162,3 +162,78 @@ def get_companies_avg_rating(company_id):
     the_response = make_response(jsonify({'AvgRating': avg_rating}))
     the_response.status_code = 200
     return the_response
+
+@companies.route('/companies/<company_id>/<new_name>', methods=['PUT'])
+def update_company_name(company_id, new_name):
+
+    cursor = db.get_db().cursor()
+    cursor.execute('''UPDATE companies
+                      SET name = %s
+                      WHERE id = %s''', (new_name, company_id))
+    
+    db.get_db().commit()
+
+    the_response = make_response(jsonify({}))
+    the_response.status_code = 200
+    return the_response
+
+@companies.route('/companies/common_courses_taken/<company_id>', methods=['GET'])
+def get_companies_common_courses_taken(company_id):
+
+    cursor = db.get_db().cursor()
+    cursor.execute('''SELECT 
+    co.id AS courseId, 
+    co.title AS courseTitle, 
+    COUNT(sc.courseId) AS studentCount
+FROM 
+    companies c
+JOIN 
+    job_posting jp ON c.id = jp.companyId
+JOIN 
+    job_application ja ON jp.id = ja.jobId
+JOIN 
+    student_courses sc ON ja.studentId = sc.studentId
+JOIN 
+    courses co ON sc.courseId = co.id
+WHERE 
+    c.id = %s
+GROUP BY 
+    co.id, co.title
+ORDER BY 
+    studentCount DESC
+LIMIT 5;
+
+                    ''', (company_id,))
+    
+    theData = cursor.fetchall()
+    
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
+    return the_response
+
+@companies.route('/companies/modify_company/<id>/<new_name>', methods=['PUT'])
+def modify_company(id, new_name):
+    cursor = db.get_db().cursor()
+    cursor.execute('''UPDATE companies SET name = %s WHERE id = %s''', (new_name, id))
+    db.get_db().commit()
+    the_response = make_response(jsonify('Company Updated'))
+    the_response.status_code = 200
+    return the_response
+
+@companies.route('/companies/delete_company/<id>', methods=['DELETE'])
+def delete_company(id):
+    cursor = db.get_db().cursor()
+    cursor.execute('''DELETE FROM companies WHERE id = %s''', (id,))
+    db.get_db().commit()
+    the_response = make_response(jsonify('Company Deleted'))
+    the_response.status_code = 200
+    return the_response
+
+@companies.route('/companies/add_company/<name>', methods=['POST'])
+def add_company(name):
+    cursor = db.get_db().cursor()
+    cursor.execute('''INSERT INTO companies (name) VALUES (%s)''', (name,))
+    db.get_db().commit()
+    the_response = make_response(jsonify('Company Added'))
+    the_response.status_code = 200
+    return the_response

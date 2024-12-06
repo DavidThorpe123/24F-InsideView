@@ -1,49 +1,102 @@
-from flask import Blueprint, request, jsonify
-from models import db, Student, Skill, student_skills
+from flask import Blueprint, request, jsonify, make_response
+from backend.db_connection import db
+import logging
 
-recruiter_bp = Blueprint('recruiter', __name__, url_prefix='/recruiter')
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+interns_bp = Blueprint('interns_bp', __name__, url_prefix='/in')
 
 #get all students
-@recruiter_bp.route('/students', methods=['GET'])
+@interns_bp.route('/students', methods=['GET'])
 def get_students():
-    students = Student.query.all()
-    return jsonify([student.to_dict() for student in students])
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT * FROM students')
+    students = cursor.fetchall()
+    the_response = make_response(jsonify(students))
+    the_response.status_code = 200
+    return the_response
 
 #get all job postings
-@recruiter_bp.route('/job_postings', methods=['GET'])
+@interns_bp.route('/job_postings', methods=['GET'])
 def get_job_postings():
-    job_postings = JobPosting.query.all()
-    return jsonify([job.to_dict() for job in job_postings])
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT * FROM job_posting')
+    job_postings = cursor.fetchall()
+    the_response = make_response(jsonify(job_postings))
+    the_response.status_code = 200
+    return the_response
 
 #get student skills
-@recruiter_bp.route('/students/<int:id>/qualifications', methods=['GET'])
+@interns_bp.route('/students/<int:id>/qualifications', methods=['GET'])
 def get_student_qualifications(id):
-    student = Student.query.get_or_404(id)
-    skills = db.session.query(Skill).join(student_skills).filter(student_skills.c.studentId == id).all()
-    return jsonify({'student': student.to_dict(), 'skills': [skill.skillName for skill in skills]})
+    cursor = db.get_db().cursor()
+    cursor.execute('''SELECT s.id, s.firstName, s.lastName, sk.skillName
+        FROM students s
+        JOIN student_skills ss ON s.id = ss.studentId
+        JOIN skills sk ON ss.skillId = sk.id
+        WHERE s.id = %s''', 
+        (id,))
+    skills = cursor.fetchall()
+    the_response = make_response(jsonify(skills))
+    the_response.status_code = 200
+    return the_response
 
 #add new student skill
-@recruiter_bp.route('/students/<int:id>/qualifications', methods=['POST'])
+@interns_bp.route('/students/<int:id>/qualifications', methods=['POST'])
 def add_student_skill(id):
     data = request.get_json()
     skill_name = data.get('skillName')
 
-    skill = Skill.query.filter_by(skillName=skill_name).first()
+    cursor = db.get_db().cursor()
+    
+    #check if skill exists
+    cursor.execute('SELECT id FROM skills WHERE skillName = %s', (skill_name,))
+    skill = cursor.fetchone()
     if not skill:
-        skill = Skill(skillName=skill_name)
-        db.session.add(skill)
-        db.session.commit()
+        cursor.execute('INSERT INTO skills (skillName) VALUES (%s)', (skill_name,))
+        db.get_db().commit()
+        skill_id = cursor.lastrowid
+    else:
+        skill_id = skill['id']
 
-    db.session.execute(student_skills.insert().values(studentId=id, skillId=skill.id))
-    db.session.commit()
-    return jsonify({'message': f'Skill "{skill_name}" added to student {id}'}), 201
+    #add skill to student
+    cursor.execute('INSERT INTO student_skills (studentId, skillId) VALUES (%s, %s)', (id, skill_id))
+    db.get_db().commit()
 
-#delete student's skill
-@recruiter_bp.route('/students/<int:student_id>/qualifications/<int:skill_id>', methods=['DELETE'])
+    the_response = make_response(jsonify({'message': f'Skill "{skill_name}" added to student {id}'}))
+    the_response.status_code = 201
+    return the_response
+
+#delete a student's skill
+@interns_bp.route('/students/<int:student_id>/qualifications/<int:skill_id>', methods=['DELETE'])
 def delete_student_skill(student_id, skill_id):
-    db.session.execute(student_skills.delete().where(
-        (student_skills.c.studentId == student_id) & (student_skills.c.skillId == skill_id)
-    ))
-    db.session.commit()
-    return '', 204
- 
+    cursor = db.get_db().cursor()
+    cursor.execute('DELETE FROM student_skills WHERE studentId = %s AND skillId = %s', (student_id, skill_id))
+    db.get_db().commit()
+
+    the_response = make_response(jsonify({'message': f'Skill with ID {skill_id} removed from student {student_id}'}))
+    the_response.status_code = 204
+    return the_response
+
+#compare student qualifications by company
+@interns_bp.route('/qualifications/comparison', methods=['GET'])
+def compare_intern_qualifications():
+    try:
+        cursor = db.get_db().cursor()
+        cursor.execute('''SELECT c.name AS companyName, sk.skillName, COUNT(DISTINCT s.id) AS numInternsWithSkill
+            FROM companies c
+            JOIN reviews r ON c.id = r.jobId
+            JOIN students s ON r.studentId = s.id 
+            JOIN student_skills ss ON s.id = ss.studentId
+            JOIN skills sk ON ss.skillId = sk.id
+            GROUP BY c.name, sk.skillName
+            ORDER BY c.name, sk.skillName''')
+        comparison_data = cursor.fetchall()
+        the_response = make_response(jsonify(comparison_data))
+        the_response.status_code = 200
+        return the_response
+    except Exception as e:
+        logger.error(f"Error while fetching qualifications comparison: {e}")
+        return make_response(jsonify({"error": "Internal server error"}), 500)

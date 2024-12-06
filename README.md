@@ -1,3 +1,34 @@
+# Team InsideView README Updates
+## Team Members: Alexander Schinkmann-Bonias, Lauren Bowler, Eric Mecca, David Thorpe, Ethan Brune 
+
+## Project OverView:
+    NUWorks is great, but it sure has its flaws. For our project, we wanted to revamp the student, advisor, and recruiter experience. 
+    Students now have the option to view lists of common questions for each company, add their own if they wish to help out, and 
+read the reviews that other students have of the jobs they're considering applying to. Again, students can add their own 
+reviews or edit them after posting. Viewing job postings and applying is also easy-peasy!  
+    The administrator can go to a dashboard page that lists companies, recent reviews, students, and admin accounts, or to a page that shows system analytics including the number of recent posts, jobs added, and general site activity.
+    The recruiter is able to view or delete their company's job postings, see an overview of each company's intern qualifications as well as individual student qualifications, and view student feedback for their company.
+
+## How to Build and Start Containers:
+
+### env config
+- SECRET_KEY=someCrazyS3cR3T!Key.!
+- DB_USER=root
+- DB_HOST=db
+- DB_PORT=3306
+- DB_NAME=insideView
+- MYSQL_ROOT_PASSWORD=<some_password>
+
+
+
+
+
+
+
+
+
+
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### 
 # Fall 2024 CS 3200 Project Template Repository
 
 This repo is a template for your semester project.  It includes most of the infrastructure setup (containers) and sample code and data throughout.  Explore it fully and ask questions.
