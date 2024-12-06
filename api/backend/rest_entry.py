@@ -10,6 +10,7 @@ from backend.interns.interns import interns_bp
 from backend.jobPostings.jobPostings_routes import jobPostings
 # from backend.interns import interns
 from backend.students.student_routes import students
+from backend.reviews.review_routes import reviews
 from backend.sysAdmins.admin_routes import admins
 
 import os
@@ -53,6 +54,7 @@ def create_app():
     app.register_blueprint(interns_bp, url_prefix='/in')
     app.register_blueprint(jobPostings, url_prefix='/jp')
     app.register_blueprint(students, url_prefix='/st')
+    app.register_blueprint(reviews, url_prefix='/rv')
     app.register_blueprint(admins, url_prefix='/ad')
     # app.register_blueprint(interns, url_prefix='/in')
 

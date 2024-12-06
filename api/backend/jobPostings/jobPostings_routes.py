@@ -32,6 +32,19 @@ def get_jobPostings(company_id):
     the_response.status_code = 200
     return the_response
 
+@jobPostings.route('/jobPostings', methods=['GET'])
+def get_jobPostings_last7days():
+    cursor = db.get_db().cursor()
+    cursor.execute('''SELECT jp.id, jp.name, jp.description, jp.location, jp.datePosted, cc.firstName, cc.lastName, cc.email, cc.phone
+                   FROM job_posting jp
+                   JOIN company_contact cc ON jp.contactId = cc.id
+                   WHERE DATE_SUB(jp.datePosted, INTERVAL 7 DAY) <= CURDATE()
+                   ORDER BY jp.datePosted DESC''')
+    theData = cursor.fetchall() 
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
+    return the_response
+
 @jobPostings.route('/jobPostings/reviews/<selected_job_id>', methods=['GET'])
 def get_reviews(selected_job_id):
     cursor = db.get_db().cursor()
