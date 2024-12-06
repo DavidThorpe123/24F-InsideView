@@ -57,11 +57,8 @@ def create_app():
     app.register_blueprint(interns_bp, url_prefix='/in')
     app.register_blueprint(jobPostings, url_prefix='/jp')
     app.register_blueprint(students, url_prefix='/st')
-<<<<<<< HEAD
     app.register_blueprint(reviews, url_prefix='/rv')
-=======
     app.register_blueprint(admins, url_prefix='/ad')
->>>>>>> main
     # app.register_blueprint(interns, url_prefix='/in')
 
     
