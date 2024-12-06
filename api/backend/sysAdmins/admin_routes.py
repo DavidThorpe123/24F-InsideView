@@ -15,3 +15,33 @@ def get_admins():
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
     return the_response
+
+@admins.route('/system_admins', methods=['POST'])
+def new_empty_admin():
+    cursor = db.get_db().cursor()
+    cursor.execute('''INSERT INTO system_admins DEFAULT VALUES''')
+    db.get_db().commit()
+    the_response = make_response(jsonify('New Blank Admin Created'))
+    the_response.status_code = 200
+    return the_response
+
+@admins.route('/system_admins', methods=['PUT'])
+def update_admin_last_name(new_last_name, admin_id):
+    cursor = db.get_db().cursor()
+    cursor.execute('''UPDATE system_admins
+                   SET lastName = %s
+                   WHERE id = %s''',
+                   new_last_name, admin_id)
+    db.get_db().commit()
+    the_response = make_response(jsonify('Last name updated'))
+    the_response.status_code = 200
+    return the_response
+
+@admins.route('/system_admins', methods=['DELETE'])
+def delete_admin(admin_id):
+    cursor = db.get_db().cursor()
+    cursor.execute('''DELETE FROM system_admins WHERE id = %s''', (admin_id))
+    db.get_db().commit()
+    the_response = make_response(jsonify('Admin Killed'))
+    the_response.status_code = 200
+    return the_response
