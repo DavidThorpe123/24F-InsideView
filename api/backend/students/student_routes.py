@@ -28,12 +28,6 @@ def get_student(student_id):
     return the_response
 
 @students.route('/students', methods=['GET'])
-<<<<<<< HEAD
-def get_students_24HR():
-    cursor = db.get_db().cursor()
-    cursor.execute('''SELECT id, firstName, lastName, gpa, gradYear, years_exp FROM students''')
-    theData = cursor.fetchall()
-=======
 def get_students():
 
     cursor = db.get_db().cursor()
@@ -41,12 +35,6 @@ def get_students():
     ''')
     
     theData = cursor.fetchall()
-    
-    the_response = make_response(jsonify(theData))
-    the_response.status_code = 200
-    return the_response
-
->>>>>>> main
 
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
