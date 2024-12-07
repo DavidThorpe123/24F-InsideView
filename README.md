@@ -2,12 +2,15 @@
 ## Team Members: Alexander Schinkmann-Bonias, Lauren Bowler, Eric Mecca, David Thorpe, Ethan Brune 
 
 ## Project OverView:
-    NUWorks is great, but it sure has its flaws. For our project, we wanted to revamp the student, advisor, and recruiter experience. 
-    Students now have the option to view lists of common questions for each company, add their own if they wish to help out, and 
+NUWorks is great, but it sure has its flaws. For our project, we wanted to revamp the student, advisor, and recruiter experience, and add some features for system administrators.
+Students now have the option to view lists of common questions for each company, add their own if they wish to help out, and 
 read the reviews that other students have of the jobs they're considering applying to. Again, students can add their own 
 reviews or edit them after posting. Viewing job postings and applying is also easy-peasy!  
-    The administrator can go to a dashboard page that lists companies, recent reviews, students, and admin accounts, or to a page that shows system analytics including the number of recent posts, jobs added, and general site activity.
-    The recruiter is able to view or delete their company's job postings, see an overview of each company's intern qualifications as well as individual student qualifications, and view student feedback for their company.
+The administrator can go to a dashboard page that lists companies, recent reviews, students and admin accounts, or to a page that shows system analytics including the number of recent posts, jobs added, and general site activity.
+The recruiter is able to view or delete their company's job postings, see an overview of each company's intern qualifications as well as individual student qualifications, and view student feedback for their company.
+A potential advisor can see a high level overview of all the companies that are currently hiring. From, there they can see specific company details such as reviews, average GPA, common courses taken etc. Additionally they can see a brief overview of the students who have left reviews to see their individual gpa they had for a position and their resume.
+You can search for certain student keywords such as job descriptions or finding a specific company name. 
+
 
 ## How to Build and Start Containers:
 
@@ -18,14 +21,6 @@ reviews or edit them after posting. Viewing job postings and applying is also ea
 - DB_PORT=3306
 - DB_NAME=insideView
 - MYSQL_ROOT_PASSWORD=<some_password>
-
-
-
-
-
-
-
-
 
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### 
