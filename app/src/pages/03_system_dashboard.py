@@ -36,7 +36,7 @@ with col1:
             }
 
 if 'editing_company' in st.session_state:
-    with st.form("edit_form"):
+    with st.form("edit_form2"):
         editing_company = st.session_state['editing_company']
         st.write(f"Editing: {editing_company['name']}")
 

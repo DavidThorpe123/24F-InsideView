@@ -45,3 +45,16 @@ def delete_admin(admin_id):
     the_response = make_response(jsonify('Admin Killed'))
     the_response.status_code = 200
     return the_response
+
+@admins.route('/system_admins/<admin_id>', methods=['PUT'])
+def update_admin_id(admin_id):
+    new_id = request.json.get('id')
+    cursor = db.get_db().cursor()
+    cursor.execute('''UPDATE system_admins
+                      SET id = %s
+                      WHERE id = %s''',
+                   (new_id, admin_id))
+    db.get_db().commit()
+    the_response = make_response(jsonify('Admin ID updated'))
+    the_response.status_code = 200
+    return the_response
