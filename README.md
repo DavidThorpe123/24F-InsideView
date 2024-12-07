@@ -11,6 +11,8 @@ The recruiter is able to view or delete their company's job postings, see an ove
 A potential advisor can see a high level overview of all the companies that are currently hiring. From, there they can see specific company details such as reviews, average GPA, common courses taken etc. Additionally they can see a brief overview of the students who have left reviews to see their individual gpa they had for a position and their resume.
 You can search for certain student keywords such as job descriptions or finding a specific company name. 
 
+## Video Link:
+https://drive.google.com/file/d/13SV-TH8li7NqdxWvBk977eB-lxQGA21d/view?usp=sharing
 
 ## How to Build and Start Containers:
 
